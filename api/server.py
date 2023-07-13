@@ -28,14 +28,6 @@ s3_client = boto3.client(
     aws_secret_access_key=AWS_SECRET_ACCESS_KEY
 )
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-@app.get("/image/{image_id}")
-async def get_image():
-    return {""}
-
 @app.post("/image")
 async def upload_image(file: UploadFile = File(...)):
     status = True
@@ -61,7 +53,3 @@ async def upload_image(file: UploadFile = File(...)):
         "success": status,
         "url": object_url
     })
-
-@app.delete("/image/{image_id}")
-async def delete_image():
-    return {""}
