@@ -9,6 +9,7 @@ interface FileUploadResponse {
 
 export default async function Index() {
   const [error, setError] = useState('');
+  const [url, setUrl] = useState('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -25,7 +26,7 @@ export default async function Index() {
     if (file) formData.append('file', file);
 
     try {
-      const res = await fetch(`${process.env.SERVER}/image`, {
+      const res = await fetch(`http://localhost:8000/image`, {
         method: 'POST',
         body: formData,
       });
@@ -34,18 +35,19 @@ export default async function Index() {
 
       if (data.success) {
         console.log('Image uploaded to:', data.url);
+        setUrl(data.url);
       } else {
         throw new Error('Upload failed');
       }
     } catch (error) {
-      console.error(error);
-      setError("Error: "  + error)
+      console.error('' + error);
+      setError('' + error);
     }
   };
 
   return (
     <div className="flex flex-col gap-y-6 items-center">
-      <span>{error}</span>
+      <span className="text-red-400">{error}</span>
       <input
         type="file"
         className="block w-fit text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
@@ -56,7 +58,7 @@ export default async function Index() {
         className="block w-fit px-10 py-2 rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100"
         onClick={handleSubmit}
       />
-      <div>Image URL: </div>
+      <div>Image URL: {url}</div>
     </div>
   );
 }
