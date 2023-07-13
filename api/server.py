@@ -4,6 +4,7 @@ from fastapi import FastAPI, FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import boto3
+import hashlib
 
 load_dotenv()
 
@@ -39,9 +40,26 @@ async def get_image():
 async def upload_image(file: UploadFile = File(...)):
     status = True
 
+    # Get file contents
+    file_bytes = file.file.read()
+
+    # Hash the filename 
+    file_hash = hashlib.md5(file.filename.encode())
+    file_hash_str = file_hash.hexdigest()
+    
+    # Upload to S3
+    s3_client.put_object(
+        Bucket="image-upload-main",
+        Key=file_hash_str,
+        Body=file_bytes,
+        ACL="public-read"
+    )
+    
+    object_url = f"https://image-upload-main.s3.amazonaws.com/{file_hash_str}"
+
     return JSONResponse({
         "success": status,
-        "url": "url"
+        "url": object_url
     })
 
 @app.delete("/image/{image_id}")
