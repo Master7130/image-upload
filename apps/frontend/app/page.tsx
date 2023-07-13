@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 
 interface FileUploadResponse {
   success: boolean;
